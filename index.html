@@ -1,59 +1,24 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>مُصحف المعرفة العالمي</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>مدينة العلم</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            'cairo': ['Cairo', 'sans-serif'],
-            'noto-naskh': ['Noto Naskh Arabic', 'serif'],
-            'amiri': ['Amiri', 'serif'],
-          },
-          colors: {
-            primary: {
-              DEFAULT: '#1A535C', // Dark Teal
-              light: '#2E8A8F',
-              dark: '#0F3A40',
-            },
-            secondary: {
-              DEFAULT: '#FFD700', // Gold-ish
-              light: '#FFEB87',
-              dark: '#B29600',
-            },
-            background: {
-              light: '#F7F9F9',
-              dark: '#1E232A', // Darker gray for better contrast
-            },
-            text: {
-              light: '#2C3E50',
-              dark: '#E0E0E0',
-            },
-            surface: {
-              light: '#FFFFFF',
-              dark: '#2A3038',
-            }
-          }
-        }
-      }
-    }
-  </script>
+  <link rel="stylesheet" href="/src/index.css">
 <script type="importmap">
 {
   "imports": {
-    "@google/genai": "https://esm.sh/@google/genai@^1.6.0",
     "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
     "react/": "https://esm.sh/react@^19.1.0/",
-    "react-dom/": "https://esm.sh/react-dom@^19.1.0/"
+    "@google/genai": "https://esm.sh/@google/genai@^1.6.0",
+    "vite": "https://esm.sh/vite@^6.3.5",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^4.5.2",
+    "vite-plugin-copy": "https://esm.sh/vite-plugin-copy@^0.1.6",
+    "pdfjs-dist": "https://esm.sh/pdfjs-dist@^5.3.31"
   }
 }
 </script>
@@ -61,7 +26,7 @@
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark font-cairo">
   <div id="root"></div>
-  <script type="module" src="/src/index.tsx"></script>
+  <script type="module" src="/src/main.tsx"></script>
 <script type="module" src="/index.tsx"></script>
 </body>
 </html>

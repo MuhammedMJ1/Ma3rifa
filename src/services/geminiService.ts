@@ -1,13 +1,13 @@
-
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { ChapterIndexItem } from "../types";
 import { GEMINI_MODEL_TEXT } from "../constants";
 
-const API_KEY = process.env.API_KEY;
+// Access the API key from Vite's environment variables
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 if (!API_KEY) {
   console.warn(
-    "API_KEY environment variable is not set. Gemini API calls will be mocked."
+    "VITE_GEMINI_API_KEY environment variable is not set. Gemini API calls will be mocked. Create a .env file in the root with VITE_GEMINI_API_KEY=your_key"
   );
 }
 
@@ -77,26 +77,24 @@ ${arabicText}
 
     if (Array.isArray(parsedData) && parsedData.every(item => typeof item.title === 'string')) {
        return parsedData.map((item, index) => ({
-        id: `chapter-${index}-${encodeURIComponent(item.title.slice(0,20))}`, // Create a somewhat unique ID
+        id: `chapter-${index}-${encodeURIComponent(item.title.slice(0,20))}`, 
         title: item.title,
       }));
     } else {
       console.warn("Gemini index response was not in the expected format. Received:", parsedData);
-      // Fallback: try to split by common section markers if JSON fails. This is very basic.
       const lines = arabicText.split('\n');
       const potentialTitles = lines.filter(line => line.length > 5 && line.length < 100 && (line.startsWith("الفصل") || line.startsWith("القسم") || line.startsWith("مقدمة")));
       if (potentialTitles.length > 0) {
         return potentialTitles.map((title, index) => ({ id: `fallback-chapter-${index}`, title }));
       }
-      return []; // Return empty if parsing fails and no fallback
+      return []; 
     }
 
   } catch (error) {
     console.error("Error generating index with Gemini API:", error);
-    // If API call fails, attempt a very basic local heuristic as a fallback.
     const lines = arabicText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
     const chapters: ChapterIndexItem[] = [];
-    lines.forEach((line, index) => {
+    lines.forEach((line) => {
         if ((line.startsWith("الفصل") || line.startsWith("القسم") || line.startsWith("مقدمة")) && line.length < 100) {
             chapters.push({ id: `heuristic-chapter-${chapters.length}`, title: line });
         }

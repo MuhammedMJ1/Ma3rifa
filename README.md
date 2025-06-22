@@ -4,7 +4,7 @@
 
 ## الميزات الرئيسية
 
-*   رفع ملفات PDF ومعالجتها (محاكاة استخلاص النص حاليًا).
+*   رفع ملفات PDF ومعالجتها (محاكاة استخلاص النص حاليًا - **قيد التطوير: دمج قارئ PDF حقيقي**).
 *   ترجمة النص إلى العربية باستخدام Gemini API.
 *   عرض النص المترجم والأصلي.
 *   تخصيص الخطوط (النوع والحجم).
@@ -17,10 +17,10 @@
 ## التقنيات المستخدمة
 
 *   React مع TypeScript
-*   Tailwind CSS
+*   Vite (نظام بناء وخادم تطوير)
+*   Tailwind CSS (مدمج عبر PostCSS)
 *   Gemini API (@google/genai)
 *   Web Speech API
-*   Import Maps (لا حاجة لخطوة بناء معقدة للتشغيل الأساسي)
 
 ## التشغيل المحلي
 
@@ -29,34 +29,48 @@
     git clone https://github.com/<YourGitHubUsername>/<YourRepositoryName>.git
     cd <YourRepositoryName>
     ```
-2.  **مفتاح Gemini API (اختياري للتشغيل الأساسي):**
+2.  **تثبيت الاعتماديات:**
+    ```bash
+    npm install
+    # أو yarn install أو pnpm install
+    ```
+3.  **مفتاح Gemini API:**
     *   لعمل ميزات الترجمة والفهرسة الفعلية، ستحتاج إلى مفتاح Gemini API.
-    *   يعتمد التطبيق حاليًا على `process.env.API_KEY`. في بيئة التشغيل البسيطة هذه بدون نظام بناء، لن يكون هذا المتغير متاحًا.
-    *   **للاختبار المحلي فقط:** يمكنك تعديل ملف `src/services/geminiService.ts` واستبدال `process.env.API_KEY` بمفتاحك مباشرة. **(لا يُنصح بهذا للإنتاج)**.
-    *   بدون مفتاح API صالح، سيعمل التطبيق باستخدام بيانات وهمية (mock data).
-3.  **تشغيل خادم ويب محلي:**
-    بما أن التطبيق يستخدم وحدات JavaScript (`type="module"` و import maps)، يجب تقديمه عبر خادم ويب.
-    *   إذا كان لديك Python 3:
-        ```bash
-        python -m http.server
+    *   قم بإنشاء ملف `.env` في جذر المشروع (يمكنك نسخ `.env.example` وتسميته `.env`).
+    *   أضف مفتاحك إلى ملف `.env` كالتالي:
         ```
-    *   إذا كان لديك Node.js، يمكنك استخدام `serve`:
-        ```bash
-        npx serve .
+        VITE_GEMINI_API_KEY=YourActualApiKeyHere
         ```
-4.  **فتح التطبيق في المتصفح:**
-    افتح المتصفح وانتقل إلى العنوان الذي يعرضه الخادم المحلي (عادةً `http://localhost:8000` أو `http://localhost:3000`).
+    *   بدون مفتاح API صالح، سيعمل التطبيق باستخدام بيانات وهمية (mock data) للترجمة والفهرسة.
+4.  **تشغيل خادم التطوير:**
+    ```bash
+    npm run dev
+    # أو yarn dev أو pnpm dev
+    ```
+    سيقوم هذا الأمر بتشغيل التطبيق (عادةً على `http://localhost:3000`).
+
+## بناء التطبيق للإنتاج
+
+```bash
+npm run build
+# أو yarn build أو pnpm build
+```
+سيتم إنشاء الملفات النهائية في مجلد `dist`.
 
 ## هيكل المشروع
 
-*   `index.html`: نقطة الدخول الرئيسية لـ HTML.
-*   `metadata.json`: بيانات وصفية للتطبيق.
-*   `package.json`: معلومات المشروع والاعتماديات (الاعتماديات تُحمّل عبر import maps).
+*   `index.html`: نقطة الدخول الرئيسية لـ HTML (في جذر المشروع).
+*   `vite.config.ts`: ملف تهيئة Vite.
+*   `tailwind.config.js`, `postcss.config.js`: ملفات تهيئة Tailwind CSS.
+*   `tsconfig.json`: ملف تهيئة TypeScript.
+*   `public/`: للملفات الثابتة (إذا وجدت).
 *   `src/`: يحتوي على جميع أكواد TypeScript و React.
-    *   `src/index.tsx`: نقطة الدخول الرئيسية لتطبيق React.
+    *   `src/main.tsx`: نقطة الدخول الرئيسية لتطبيق React.
+    *   `src/index.css`: ملف CSS الرئيسي (يتضمن Tailwind).
     *   `src/components/`: مكونات React.
     *   `src/contexts/`: سياق React.
     *   `src/hooks/`: خطافات React المخصصة.
     *   `src/services/`: خدمات (مثل التفاعل مع Gemini API).
     *   `src/types.ts`: تعريفات TypeScript.
     *   `src/constants.ts`: ثوابت التطبيق.
+*   `.env.example`: مثال لملف متغيرات البيئة.

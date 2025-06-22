@@ -1,4 +1,3 @@
-
 export interface ChapterIndexItem {
   id: string; // Unique ID for the chapter, e.g., generated from title
   title: string;
@@ -17,7 +16,7 @@ export enum DisplayMode {
 }
 
 export interface Book {
-  id: string; // UUID
+  id: string; // UUID or predefined ID for preloaded books
   name: string; // filename or user-defined
   originalText: string;
   translatedText: string;
@@ -27,6 +26,7 @@ export interface Book {
   currentFontSize: number;
   dateAdded: string; // ISO date string
   displayMode: DisplayMode;
+  isPreloaded?: boolean; // To identify preloaded books
 }
 
 export interface AppSettings {

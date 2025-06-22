@@ -1,11 +1,36 @@
 {
-  "name": "mushaf-almarefa-alalami",
-  "version": "0.1.0",
+  "name": "madinat-al-ilm",
+  "version": "0.2.0",
   "private": true,
-  "description": "تطبيق ويب لقراءة ملفات PDF مترجمة إلى العربية مع ميزات تخصيص وفهرسة ذكية باستخدام الذكاء الاصطناعي.",
+  "type": "module",
+  "description": "تطبيق ويب لقراءة ملفات PDF مترجمة إلى العربية مع ميزات تخصيص وفهرسة ذكية، ومكتبة للمعرفة الإسلامية.",
   "scripts": {
-    "start": "echo \"Run a local HTTP server. Example for Python 3: python -m http.server. For Node.js: npx serve .\"",
-    "dev": "npm run start"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@google/genai": "^1.6.0",
+    "pdfjs-dist": "^4.4.168",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.13.1",
+    "@typescript-eslint/parser": "^7.13.1",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.7",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.4.5",
+    "vite": "^5.3.1"
   },
   "keywords": [
     "react",
@@ -13,18 +38,9 @@
     "tailwind",
     "gemini-api",
     "pdf-reader",
-    "arabic"
+    "arabic",
+    "islamic-library"
   ],
-  "author": "Your Name/Organization",
-  "license": "UNLICENSED",
-  "dependencies": {
-    "@google/genai": "https://esm.sh/@google/genai@^1.6.0",
-    "react": "https://esm.sh/react@^19.1.0",
-    "react-dom": "https://esm.sh/react-dom@^19.1.0"
-  },
-  "devDependencies": {
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
-    "typescript": "^5.0.0"
-  }
+  "author": "مدينة العلم",
+  "license": "UNLICENSED"
 }
