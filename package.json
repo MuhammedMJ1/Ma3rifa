@@ -1,0 +1,30 @@
+{
+  "name": "mushaf-almarefa-alalami",
+  "version": "0.1.0",
+  "private": true,
+  "description": "تطبيق ويب لقراءة ملفات PDF مترجمة إلى العربية مع ميزات تخصيص وفهرسة ذكية باستخدام الذكاء الاصطناعي.",
+  "scripts": {
+    "start": "echo \"Run a local HTTP server. Example for Python 3: python -m http.server. For Node.js: npx serve .\"",
+    "dev": "npm run start"
+  },
+  "keywords": [
+    "react",
+    "typescript",
+    "tailwind",
+    "gemini-api",
+    "pdf-reader",
+    "arabic"
+  ],
+  "author": "Your Name/Organization",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.6.0",
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom": "https://esm.sh/react-dom@^19.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}
