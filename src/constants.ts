@@ -54,6 +54,6 @@ export const MIN_FONT_SIZE = 12;
 export const MAX_FONT_SIZE = 36;
 export const FONT_SIZE_STEP = 2;
 
-export const LOCALSTORAGE_BOOKS_KEY = "madinatAlIlm_books"; // Updated key prefix
-export const LOCALSTORAGE_SETTINGS_KEY = "madinatAlIlm_settings"; // Updated key prefix
-export const LOCALSTORAGE_PRELOADED_BOOKS_PROCESSED_KEY = "madinatAlIlm_preloadedProcessed";
+export const LOCALSTORAGE_BOOKS_KEY = "madinatAlIlm_userBooks"; // Explicitly for user books
+export const LOCALSTORAGE_SETTINGS_KEY = "madinatAlIlm_settings";
+export const LOCALSTORAGE_PROCESSED_PRELOADED_BOOKS_KEY = "madinatAlIlm_processedPreloadedBooks"; // New key

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback, ChangeEvent, KeyboardEvent } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AppProvider, useAppContext } from './contexts/AppContext';
@@ -55,10 +56,10 @@ const LoadingSpinner: React.FC<{ message?: string }> = ({ message = "جاري ا
 );
 
 const ErrorDisplay: React.FC<{ message: string; onDismiss?: () => void }> = ({ message, onDismiss }) => {
-  const { clearError } = useAppContext();
+  const { clearError } = useAppContext(); // Ensure clearError is used from context
   const handleDismiss = () => {
     if (onDismiss) onDismiss();
-    clearError();
+    clearError(); // Always clear global error
   };
   return (
     <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md shadow-md my-4" role="alert">
@@ -232,7 +233,9 @@ const BookItem: React.FC<{ book: Book; onOpen: (id: string) => void; onDelete?: 
 const LibraryView: React.FC = () => {
   const { books, preloadedBooks, setCurrentBookById, deleteBook, isLoading: globalLoading, loadingMessage, error: globalError, clearError } = useAppContext();
   
-  if (globalLoading && books.length === 0 && preloadedBooks.length === 0) {
+  const initialAppLoad = globalLoading && books.length === 0 && preloadedBooks.length === 0;
+
+  if (initialAppLoad) { // Show full page loader only during initial processing of preloaded books.
       return <div className="flex-grow flex items-center justify-center"><LoadingSpinner message={loadingMessage} /></div>;
   }
 
@@ -245,7 +248,7 @@ const LibraryView: React.FC = () => {
         <>
           <h2 className="text-2xl font-semibold my-6 text-text-light dark:text-text-dark">مكتبة مدينة العلم</h2>
           <div className="space-y-4 mb-8">
-            {preloadedBooks.map(book => (
+            {preloadedBooks.sort((a,b) => a.name.localeCompare(b.name)).map(book => (
               <BookItem key={book.id} book={book} onOpen={setCurrentBookById} />
             ))}
           </div>
@@ -272,7 +275,7 @@ const LibraryView: React.FC = () => {
 
 const ContentRenderer = React.memo(({ text, chapters, fontFamily, fontSize }: { text: string; chapters: ChapterIndexItem[]; fontFamily: string; fontSize: number }) => {
   const lines = text.split('\n');
-  const chapterTitleMap = new Map(chapters.map(c => [c.title.trim(), c.id]));
+  const chapterTitleMap = new Map((chapters || []).map(c => [c.title.trim(), c.id]));
   return (
     <div className={`${fontFamily} text-text-light dark:text-text-dark`} style={{ fontSize: `${fontSize}px`, lineHeight: 1.8 }}>
       {lines.map((line, index) => {
@@ -297,10 +300,15 @@ const ReaderView: React.FC = () => {
   const { speak, pause, resume, cancel, voices, selectedVoice, setSelectedVoice, isSpeaking, isPaused } = useSpeechSynthesis();
   
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
-  // Sidebar open by default on desktop, closed on mobile
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 768); 
   const contentRef = useRef<HTMLDivElement>(null);
-  const scrollTimeoutRef = useRef<number | null>(null);
+  
+  const debouncedScrollUpdate = useCallback(debounce((scrollTop: number) => {
+    if (currentBook) {
+      updateCurrentBookScrollPosition(scrollTop);
+    }
+  }, 250), [currentBook, updateCurrentBookScrollPosition]);
+
 
   useEffect(() => {
     const contentElement = contentRef.current;
@@ -310,11 +318,11 @@ const ReaderView: React.FC = () => {
     }
   }, [currentBook?.id, currentBook?.lastReadScrollPosition]);
 
-  const handleScroll = useCallback(debounce(() => {
-    if (contentRef.current && currentBook) {
-      updateCurrentBookScrollPosition(contentRef.current.scrollTop);
+  const handleScroll = useCallback(() => {
+    if (contentRef.current) {
+        debouncedScrollUpdate(contentRef.current.scrollTop);
     }
-  }, 250), [currentBook, updateCurrentBookScrollPosition]);
+  }, [debouncedScrollUpdate]);
 
   useEffect(() => {
     const contentEl = contentRef.current;
@@ -328,17 +336,15 @@ const ReaderView: React.FC = () => {
     const handleResize = () => {
       const desktop = window.innerWidth >= 768;
       setIsDesktop(desktop);
-      // If switching to desktop, ensure sidebar is open. If switching to mobile, ensure it's closed.
-      // User can then toggle it.
       setIsSidebarOpen(desktop); 
     };
     window.addEventListener('resize', handleResize);
-    handleResize(); // Initial check
+    handleResize(); 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   if (!currentBook) return <div className="p-4 text-center">لم يتم تحديد كتاب.</div>;
-  if (globalLoading) return <div className="flex-grow flex items-center justify-center"><LoadingSpinner message={loadingMessage} /></div>;
+  if (globalLoading && !currentBook.originalText) return <div className="flex-grow flex items-center justify-center"><LoadingSpinner message={loadingMessage} /></div>; // Show loader if book content isn't ready
   if (globalError) return <ErrorDisplay message={globalError} onDismiss={clearError}/>;
 
   const fontOptions = ARABIC_FONTS.map(f => ({ label: f.name, value: f.value }));
@@ -359,14 +365,6 @@ const ReaderView: React.FC = () => {
   };
 
   const currentTextContent = currentBook.displayMode === DisplayMode.Original ? currentBook.originalText : currentBook.translatedText;
-
-  // Sidebar specific classes for desktop
-  const desktopSidebarClasses = `
-    hidden md:block w-72 lg:w-80 bg-surface-light dark:bg-surface-dark border-l 
-    dark:border-gray-700 p-4 overflow-y-auto transition-transform duration-300 ease-in-out flex-shrink-0
-    ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'} 
-  `;
-   // Note: For RTL, translate-x-full moves it off-screen to the right. Margin approach was: ${isSidebarOpen ? 'ml-0' : '-ml-72 lg:-ml-80' }
 
   return (
     <div className="flex flex-col h-[calc(100vh-4.75rem)]"> {/* Header height */}
@@ -394,9 +392,13 @@ const ReaderView: React.FC = () => {
       </div>
 
       <div className="flex flex-1 overflow-hidden"> {/* Main content area below toolbar */}
-         {/* Desktop Sidebar - using translate-x for RTL compatibility */}
+        <main ref={contentRef} className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto bg-background-light dark:bg-background-dark" dir="rtl">
+          <ContentRenderer text={currentTextContent} chapters={currentBook.chapters || []} fontFamily={currentFontFamily} fontSize={currentFontSize}/>
+        </main>
+         
+        {/* Desktop Sidebar - Placed after main for RTL flex order, appears on left */}
         <aside 
-            className={`hidden md:block bg-surface-light dark:bg-surface-dark border-r dark:border-gray-700 p-4 overflow-y-auto transition-all duration-300 ease-in-out flex-shrink-0 order-last 
+            className={`hidden md:block bg-surface-light dark:bg-surface-dark border-r dark:border-gray-700 p-4 overflow-y-auto transition-all duration-300 ease-in-out flex-shrink-0 
             ${isSidebarOpen && isDesktop ? 'w-72 lg:w-80' : 'w-0 p-0 border-transparent'}`}
             aria-label="فهرس الكتاب"
         >
@@ -404,7 +406,10 @@ const ReaderView: React.FC = () => {
            <>
             <div className="flex justify-between items-center mb-3">
                <h2 className="text-lg font-semibold text-primary dark:text-primary-light">الفهرس</h2>
-               {/* No close button needed here for desktop if controlled by toggle */}
+               {/* Desktop close button - controlled by global toggle for now */}
+                <Button onClick={() => setIsSidebarOpen(false)} variant="ghost" size="sm" className="md:inline-flex hidden" title="إغلاق الفهرس">
+                    <CloseIcon />
+                </Button>
             </div>
             {currentBook.chapters.length > 0 ? (
               <ul className="space-y-1">
@@ -419,18 +424,14 @@ const ReaderView: React.FC = () => {
          )}
         </aside>
         
-        {/* Floating button to open sidebar on DESKTOP if it's closed */}
+        {/* Floating button to open sidebar on DESKTOP if it's closed and sidebar is on the left */}
         {!isSidebarOpen && isDesktop && (
              <Button 
                 onClick={() => setIsSidebarOpen(true)} 
-                className="fixed bottom-4 left-4 z-50 p-3 bg-primary text-white rounded-full shadow-lg hover:bg-primary-light" /* Changed to left-4 for RTL */
+                className="fixed bottom-4 right-4 z-50 p-3 bg-primary text-white rounded-full shadow-lg hover:bg-primary-light" /* Positioned on the right for RTL */
                 title="فتح الفهرس" aria-label="فتح الفهرس"
              > <SidebarOpenIcon className="w-6 h-6"/> </Button>
         )}
-
-        <main ref={contentRef} className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto bg-background-light dark:bg-background-dark" dir="rtl">
-          <ContentRenderer text={currentTextContent} chapters={currentBook.chapters || []} fontFamily={currentFontFamily} fontSize={currentFontSize}/>
-        </main>
       </div>
 
       {/* Mobile Sidebar (Modal/Drawer) */}
@@ -473,25 +474,28 @@ const App: React.FC = () => {
 
   const showLibrary = !currentBook;
   const showReader = !!currentBook;
-  const initialLoading = isLoading && !currentBook && books.length === 0 && preloadedBooks.length === 0;
-  const criticalError = error && !currentBook && books.length === 0 && preloadedBooks.length === 0 && !isLoading;
+  
+  // Initial loading is when no books (user or preloaded) are ready and isLoading is true.
+  const isInitialSetupLoading = isLoading && books.length === 0 && preloadedBooks.length === 0;
+  
+  // Critical error if error occurs during initial setup before any books are available.
+  const isCriticalError = error && books.length === 0 && preloadedBooks.length === 0 && !isLoading;
 
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
       <AppHeader />
-      {initialLoading && (
+      {isInitialSetupLoading && (
          <div className="flex-grow flex items-center justify-center">
             <LoadingSpinner message={loadingMessage}/>
          </div>
       )}
-      {criticalError && (
+      {isCriticalError && (
          <div className="p-4 flex-grow flex flex-col items-center justify-center">
-          <ErrorDisplay message={`فشل تهيئة التطبيق: ${error}. الرجاء المحاولة مرة أخرى لاحقاً.`} />
-          <p className="mt-4 text-text-light dark:text-text-dark">يمكنك محاولة تحديث الصفحة.</p>
+          <ErrorDisplay message={`فشل تهيئة التطبيق: ${error}. الرجاء المحاولة مرة أخرى لاحقاً أو تحديث الصفحة.`} />
         </div>
       )}
       
-      {!initialLoading && !criticalError && (
+      {!isInitialSetupLoading && !isCriticalError && (
         showReader ? <ReaderView /> : <LibraryView />
       )}
     </div>
