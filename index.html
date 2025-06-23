@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مدينة العلم</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'sans': ['Noto Sans Arabic', 'sans-serif'],
+          },
+          colors: {
+            primary: {
+              DEFAULT: '#007BFF', // Blue
+              light: '#66aaff', 
+              dark: '#005fcc' 
+            },
+            secondary: {
+              DEFAULT: '#6c757d', // Gray
+            },
+            background: '#f8f9fa',
+            textPrimary: '#212529',
+            textSecondary: '#6c757d',
+            accent: '#17a2b8', // Teal
+          }
+        }
+      },
+      // Ensure Tailwind JIT processes classes used in JS correctly
+      // In a real build, this might be part of postcss config
+      // For CDN, this is mostly for theme extension.
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans Arabic', 'sans-serif'; /* Ensure Noto Sans Arabic is primary */
+      background-color: #f8f9fa; /* Tailwind bg-background */
+      color: #212529; /* Tailwind text-textPrimary */
+    }
+    /* Custom scrollbar for better aesthetics */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    /* Modal Animation Keyframes */
+    @keyframes modal-appear {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    .animate-modal-appear {
+      animation: modal-appear 0.3s forwards;
+    }
+
+    /* Fix for Tailwind color placeholders if they were intended for CSS vars or specific parsing */
+    /* Assuming primary-light and primary-dark were meant to be actual hex values */
+    :root {
+      --color-primary-light: #66aaff;
+      --color-primary-dark: #005fcc;
+    }
+    .hover\:bg-primary-light:hover {
+        background-color: var(--color-primary-light);
+    }
+     .bg-primary-dark {
+        background-color: var(--color-primary-dark);
+    }
+    .hover\:text-primary-light:hover {
+        color: var(--color-primary-light);
+    }
+    .hover\:bg-primary:hover {
+        background-color: #007BFF; /* Tailwind primary.DEFAULT */
+    }
+    .bg-primary {
+      background-color: #007BFF; /* Tailwind primary.DEFAULT */
+    }
+    .text-primary-dark {
+        color: var(--color-primary-dark);
+    }
+
+
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "pdfjs-dist": "https://esm.sh/pdfjs-dist@4.4.172",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.6.2",
+    "lucide-react": "https://esm.sh/lucide-react@^0.522.0",
+    "pdfjs-dist/": "https://esm.sh/pdfjs-dist@4.4.172/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.6.0"
+  }
+}
+</script>
+<!-- 
+  ملاحظات هامة لنشر الموقع على Netlify (خصوصًا فيما يتعلق بمفتاح Gemini API):
+
+  يتطلب ملف `services/geminiService.ts` مفتاح API للوصول إلى خدمات Gemini.
+  عند النشر على Netlify، لديك عدة طرق لتوفير هذا المفتاح:
+
+  1. أفضل طريقة (باستخدام عملية بناء - Build Process):
+     - قم بتعيين مفتاح API الخاص بك كـ "متغير بيئة" (Environment Variable) في إعدادات موقعك على Netlify. 
+       (مثلاً، اسم المتغير: `GEMINI_API_KEY` أو `VITE_GEMINI_API_KEY` إذا كنت تستخدم Vite).
+     - إذا كنت تستخدم أداة بناء مثل Vite أو Parcel أو Next.js، تأكد أن إعدادات هذه الأداة تقوم بقراءة متغير البيئة هذا 
+       وإتاحته في كود الواجهة الأمامية (عادة كـ `process.env.API_KEY` أو `import.meta.env.VITE_GEMINI_API_KEY`).
+     - ملف `geminiService.ts` سيحاول قراءة `process.env.API_KEY` أولاً.
+
+  2. طريقة بديلة (إذا لم تستخدم عملية بناء تعالج متغيرات البيئة للواجهة الأمامية، أو كحل مباشر):
+     - سيقوم `geminiService.ts` بالبحث عن متغير عام اسمه `window.GEMINI_API_KEY` إذا لم يجد `process.env.API_KEY`.
+     - ستحتاج إلى طريقة لجعل `window.GEMINI_API_KEY` يحتوي على قيمة المفتاح الفعلي.
+       يمكنك فعل ذلك عن طريق إضافة سكربت قبل تحميل `/index.tsx`:
+         <script> window.GEMINI_API_KEY = "YOUR_ACTUAL_API_KEY_HERE"; </script>
+       **تحذير:** كشف مفتاح API مباشرة في كود HTML أو JavaScript للعميل يعتبر غير آمن.
+                 هذه الطريقة يجب استخدامها بحذر شديد.
+
+  **التوصية العامة:**
+  استخدام عملية بناء (Build Process) تقوم بمعالجة متغيرات البيئة بأمان هو الخيار الأفضل والأكثر أمانًا.
+  إذا كان لا بد من استخدام الطريقة البديلة، فكر في استخدام Netlify Functions لتعمل كوسيط للاتصال بـ Gemini API،
+  وبهذا يبقى مفتاح API الخاص بك آمناً على الخادم.
+
+  تذكر أيضاً إعداد "أمر البناء" (Build Command) و "مجلد النشر" (Publish Directory) بشكل صحيح في Netlify
+  ليتمكن من بناء ونشر تطبيقك الذي يستخدم TypeScript و JSX.
+-->
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+
+{
+  "name": "مدينة العلم",
+  "description": "An AI-powered application for reading PDF documents with features like translation, summarization, text-to-speech, and scientific research capabilities, primarily in Arabic.",
+  "requestFramePermissions": []
+}

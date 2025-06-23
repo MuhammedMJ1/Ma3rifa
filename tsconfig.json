@@ -1,0 +1,28 @@
+
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler", // Aligns with how modern tools and type systems expect modules to be resolved
+    "resolveJsonModule": true,
+    "isolatedModules": true, // Ensures files can be transpiled independently
+    "noEmit": true, // Important: tsc will only type-check. Transpilation is handled by esm.sh or a bundler.
+    "jsx": "react-jsx", // Use the new JSX transform
+    "baseUrl": ".", // Allows for easier path management if you add path aliases
+    // "paths": { // Example for later if you structure into 'src'
+    //   "@/*": ["src/*"] 
+    // }
+  },
+  "include": [
+    "./**/*.ts",
+    "./**/*.tsx"
+  ],
+  "exclude": ["node_modules", "dist", "build"] // Exclude node_modules and potential build output dirs
+}

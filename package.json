@@ -1,0 +1,24 @@
+
+{
+  "name": "madinat-al-ilm",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo \"Run index.html with a live server. For a full dev experience with a bundler, consider tools like Vite or Parcel.\"",
+    "build": "tsc --project tsconfig.json --noEmit",
+    "typecheck": "tsc --project tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@google/genai": "^1.6.0",
+    "lucide-react": "^0.522.0",
+    "pdfjs-dist": "4.4.172",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.4.5"
+  }
+}
