@@ -1,60 +1,52 @@
+/// <reference types="vite/client" />
 
 import { GoogleGenAI, GenerateContentResponse, Chat, GroundingChunk } from '@google/genai';
 import { GEMINI_TEXT_MODEL } from '../constants';
 
-// Safely attempt to get API_KEY from process.env (Node.js/build environments)
-// or fallback to a global window variable (for direct browser/Netlify scenarios where user might inject it)
 let apiKey: string | undefined = undefined;
 
 try {
-  // Standard for Node.js environments or build tools that define process.env
-  if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
-    apiKey = process.env.API_KEY;
+  // Vite specific environment variable for client-side exposure
+  if (import.meta.env && import.meta.env.VITE_GEMINI_API_KEY) {
+    apiKey = import.meta.env.VITE_GEMINI_API_KEY as string;
   }
 } catch (e) {
-  // console.warn("process.env.API_KEY is not accessible. This is expected in some browser environments if not using a bundler that polyfills process.");
+  // console.warn("import.meta.env.VITE_GEMINI_API_KEY is not accessible. This is expected if the variable is not set.");
 }
 
 // Fallback for browser environments where API_KEY might be set on the window object
-// This is less secure if the key is hardcoded directly into HTML,
-// but can be a way for build tools or Netlify snippets to inject the key.
 if (!apiKey && typeof window !== 'undefined') {
-  // User might configure their build (e.g., Vite with define) or manually set this for simpler deployments.
-  // Example: Netlify build variable VITE_GEMINI_API_KEY -> import.meta.env.VITE_GEMINI_API_KEY -> window.GEMINI_API_KEY via script
   apiKey = (window as any).GEMINI_API_KEY;
 }
 
-const API_KEY = apiKey; // Final API_KEY to be used for initialization and checks.
+const API_KEY = apiKey; 
 
 if (!API_KEY) {
-  console.error("API_KEY for Gemini is not set. Please ensure it's configured in your environment. For Netlify, set it in site settings and ensure your build process makes it available (e.g., as process.env.API_KEY or window.GEMINI_API_KEY). AI features will be unavailable.");
+  console.error("API_KEY for Gemini is not set. Please ensure VITE_GEMINI_API_KEY is configured in your environment (e.g., .env file or Netlify build settings) or window.GEMINI_API_KEY is set. AI features will be unavailable.");
 }
 
 let ai: GoogleGenAI;
 if (API_KEY) {
     try {
-        // The SDK constructor requires `apiKey` to be a non-empty string.
         ai = new GoogleGenAI({ apiKey: API_KEY });
     } catch (error) {
         console.error("Failed to initialize GoogleGenAI. The API_KEY might be invalid or missing. AI features will be unavailable.", error);
-        // 'ai' will remain undefined, and service methods will fail gracefully.
     }
-} else {
-    // console.warn("GoogleGenAI client not initialized because API_KEY is missing. AI features will be unavailable.");
-    // 'ai' remains undefined.
 }
 
+const defaultErrorMsg = "خدمة الذكاء الاصطناعي غير متاحة حالياً. يرجى التأكد من إعداد مفتاح API بشكل صحيح وأن الخدمة مهيأة.";
+const noResponseTextMsg = "لم يتم استلام نص من خدمة الذكاء الاصطناعي.";
 
 export const geminiService = {
   summarizeText: async (text: string): Promise<string> => {
-    if (!API_KEY || !ai) return "خدمة التلخيص غير متاحة حالياً. يرجى التأكد من إعداد مفتاح API بشكل صحيح وأن خدمة الذكاء الاصطناعي مهيأة.";
+    if (!API_KEY || !ai) return defaultErrorMsg;
     try {
       const prompt = `قم بتلخيص النص التالي بشكل موجز ودقيق باللغة العربية. ركز على الأفكار الرئيسية:\n\n${text}`;
       const response: GenerateContentResponse = await ai.models.generateContent({
         model: GEMINI_TEXT_MODEL,
         contents: prompt,
       });
-      return response.text;
+      return response.text ?? noResponseTextMsg;
     } catch (error) {
       console.error('Error summarizing text with Gemini:', error);
       return `حدث خطأ أثناء التلخيص: ${error instanceof Error ? error.message : String(error)}`;
@@ -62,14 +54,14 @@ export const geminiService = {
   },
 
   extractKeywords: async (text: string): Promise<string[]> => {
-    if (!API_KEY || !ai) return ["خدمة استخراج الكلمات المفتاحية غير متاحة حالياً. تأكد من إعداد مفتاح API."];
+    if (!API_KEY || !ai) return ["خدمة استخراج الكلمات المفتاحية غير متاحة حالياً."];
     try {
       const prompt = `استخرج الكلمات المفتاحية الرئيسية من النص التالي. قدمها كقائمة مفصولة بفواصل باللغة العربية:\n\n${text}`;
       const response: GenerateContentResponse = await ai.models.generateContent({
         model: GEMINI_TEXT_MODEL,
         contents: prompt,
       });
-      const keywordsText = response.text;
+      const keywordsText = response.text ?? "";
       return keywordsText.split(',').map(kw => kw.trim()).filter(kw => kw.length > 0);
     } catch (error) {
       console.error('Error extracting keywords with Gemini:', error);
@@ -78,7 +70,7 @@ export const geminiService = {
   },
   
   translateText: async (text: string, targetLanguage: string = 'ar'): Promise<string> => {
-    if (!API_KEY || !ai) return "خدمة الترجمة غير متاحة حالياً. تأكد من إعداد مفتاح API.";
+    if (!API_KEY || !ai) return defaultErrorMsg;
     if (!text.trim()) return ""; 
     try {
       const prompt = `ترجم النص التالي إلى اللغة العربية الفصحى مع التشكيل (الحركات) قدر الإمكان. إذا كان النص بالفعل باللغة العربية، قم بتحسين صياغته وتشكيله إذا لزم الأمر:\n\n"${text}"`;
@@ -89,7 +81,7 @@ export const geminiService = {
             temperature: 0.2 
         }
       });
-      return response.text;
+      return response.text ?? noResponseTextMsg;
     } catch (error)
     {
       console.error('Error translating text with Gemini:', error);
@@ -98,7 +90,7 @@ export const geminiService = {
   },
 
   searchResearchPapers: async (query: string): Promise<{ text: string, sources: GroundingChunk[] }> => {
-    if (!API_KEY || !ai) return { text: "خدمة البحث العلمي غير متاحة حالياً. تأكد من إعداد مفتاح API.", sources: [] };
+    if (!API_KEY || !ai) return { text: defaultErrorMsg, sources: [] };
     try {
       const prompt = `ابحث عن أوراق بحثية علمية من مصادر مفتوحة حول الموضوع التالي: "${query}". قدم ملخصًا موجزًا للم یافته‌های الرئيسية باللغة العربية.`;
       const response: GenerateContentResponse = await ai.models.generateContent({
@@ -112,7 +104,7 @@ export const geminiService = {
       const groundingMetadata = response.candidates?.[0]?.groundingMetadata;
       const sources: GroundingChunk[] = groundingMetadata?.groundingChunks || [];
       
-      return { text: response.text, sources };
+      return { text: response.text ?? noResponseTextMsg, sources };
     } catch (error) {
       console.error('Error searching research papers with Gemini:', error);
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -142,12 +134,12 @@ export const geminiService = {
   },
 
   sendMessageInChat: async (chat: Chat, message: string): Promise<string> => {
-    if (!API_KEY || !ai) return "خدمة الدردشة غير متاحة حالياً. تأكد من إعداد مفتاح API.";
+    if (!API_KEY || !ai) return defaultErrorMsg;
     if (!chat) return "كائن الدردشة غير صالح أو لم يتم تهيئته.";
 
     try {
       const response: GenerateContentResponse = await chat.sendMessage({ message });
-      return response.text;
+      return response.text ?? noResponseTextMsg;
     } catch (error) {
       console.error('Error sending message in chat:', error);
       return `حدث خطأ في الدردشة: ${error instanceof Error ? error.message : String(error)}`;
@@ -155,7 +147,7 @@ export const geminiService = {
   },
 
   generateContentWithJsonOutput: async (prompt: string): Promise<any> => {
-    if (!API_KEY || !ai) return { error: "خدمة JSON غير متاحة حالياً. تأكد من إعداد مفتاح API." };
+    if (!API_KEY || !ai) return { error: defaultErrorMsg };
     try {
       const response = await ai.models.generateContent({
         model: GEMINI_TEXT_MODEL,
@@ -165,7 +157,10 @@ export const geminiService = {
         },
       });
 
-      let jsonStr = response.text.trim();
+      let jsonStr = (response.text ?? "").trim();
+      if (!jsonStr) {
+        return { error: "Empty JSON response from AI.", rawText: response.text };
+      }
       const fenceRegex = /^```(\w*)?\s*\n?(.*?)\n?\s*```$/s;
       const match = jsonStr.match(fenceRegex);
       if (match && match[2]) {

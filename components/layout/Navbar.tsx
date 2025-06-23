@@ -1,4 +1,4 @@
-/// <reference types="react" />
+
 // This component is illustrative. The main navigation is currently in App.tsx for simplicity.
 // If more complex navbar logic is needed, it can be expanded here.
 import React from 'react';

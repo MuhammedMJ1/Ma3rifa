@@ -1,4 +1,5 @@
-/// <reference types="react" />
+
+
 import React, { useState, useEffect } from 'react';
 import { IRAQI_CITIES, SHIA_PRAYER_METHOD, PRAYER_NAMES_ARABIC } from '../../constants';
 import { LoadingSpinner } from '../common/LoadingSpinner';
@@ -138,24 +139,7 @@ export const PrayerTimesBar: React.FC = () => {
         <Clock size={16} className="text-green-300" />
         <span className="font-mono tracking-wider">{currentDateTime.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}</span>
       </div>
-      <style jsx>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;  /* IE and Edge */
-          scrollbar-width: none;  /* Firefox */
-        }
-        /* Basic responsive visibility for prayer names */
-        @media (max-width: 768px) { /* md breakpoint */
-          .prayer-name-short { display: inline; }
-          .prayer-name-full { display: none; }
-        }
-         @media (min-width: 769px) { 
-          .prayer-name-short { display: none; }
-          .prayer-name-full { display: inline; }
-        }
-      `}</style>
+      {/* Styles for .hide-scrollbar are now in index.html */}
     </div>
   );
 };

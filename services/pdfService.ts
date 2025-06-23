@@ -1,12 +1,19 @@
-import { getDocument, renderTextLayer } from 'pdfjs-dist';
-import { PDFDocumentProxy, PDFPageProxy, TextItem } from 'pdfjs-dist/types/src/display/api';
+
+import * as pdfjsLib from 'pdfjs-dist';
+// Explicitly import types from their definition files for clarity and correctness
+import type { 
+    PDFDocumentProxy as PDFDocumentProxyType, 
+    PDFPageProxy as PDFPageProxyType, 
+    TextItem as TextItemType, 
+    TextContent as TextContentType 
+} from 'pdfjs-dist/types/src/display/api';
 
 export const pdfService = {
-  loadPdf: async (file: File): Promise<PDFDocumentProxy | null> => {
+  loadPdf: async (file: File): Promise<PDFDocumentProxyType | null> => {
     try {
       const arrayBuffer = await file.arrayBuffer();
-      // Use named import getDocument
-      const loadingTask = getDocument({ data: arrayBuffer });
+      // Use pdfjsLib.getDocument
+      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
       return await loadingTask.promise;
     } catch (error) {
       console.error('Error loading PDF:', error);
@@ -15,7 +22,7 @@ export const pdfService = {
   },
 
   renderPage: async (
-    pdfDoc: PDFDocumentProxy,
+    pdfDoc: PDFDocumentProxyType,
     pageNum: number,
     canvas: HTMLCanvasElement,
     textLayerDiv: HTMLDivElement,
@@ -24,10 +31,6 @@ export const pdfService = {
     try {
       const page = await pdfDoc.getPage(pageNum);
       const viewportBase = page.getViewport({ scale: 1.5 }); // Base viewport scale
-      // Adjust scale based on fontSizeMultiplier. This is an approximation.
-      // A more accurate way might involve scaling text elements directly if possible,
-      // or re-evaluating how font size translates to canvas rendering.
-      // For now, we scale the entire canvas content.
       const effectiveScale = 1.5 * (fontSizeMultiplier / 100);
       const viewport = page.getViewport({ scale: effectiveScale });
 
@@ -36,9 +39,8 @@ export const pdfService = {
 
       canvas.height = viewport.height;
       canvas.width = viewport.width;
-      canvas.style.width = '100%'; // Make canvas responsive within its container
+      canvas.style.width = '100%';
       canvas.style.height = 'auto';
-
 
       const renderContext = {
         canvasContext: context,
@@ -46,39 +48,37 @@ export const pdfService = {
       };
       await page.render(renderContext).promise;
 
-      // Render text layer for selection and search highlighting
-      textLayerDiv.innerHTML = ''; // Clear previous text layer
-      textLayerDiv.style.width = `${canvas.width}px`; // Match canvas dimensions
+      textLayerDiv.innerHTML = ''; 
+      textLayerDiv.style.width = `${canvas.width}px`; 
       textLayerDiv.style.height = `${canvas.height}px`;
       textLayerDiv.style.left = `${canvas.offsetLeft}px`;
       textLayerDiv.style.top = `${canvas.offsetTop}px`;
       
-      const textContent = await page.getTextContent();
-      // Use named import renderTextLayer and apply (as any) for type workaround
-      await (renderTextLayer as any)({ 
-          textContentSource: textContent,
+      const textContentSource: TextContentType = await page.getTextContent(); // Use TextContentType
+      // Use pdfjsLib.renderTextLayer and await its promise
+      await pdfjsLib.renderTextLayer({ // Use pdfjsLib.renderTextLayer
+          textContent: textContentSource, 
           container: textLayerDiv,
           viewport: viewport,
-          textDivs: [] // Array of HTMLDivElement
-      });
-
+          textDivs: [] 
+      }).promise;
 
     } catch (error) {
       console.error(`Error rendering page ${pageNum}:`, error);
     }
   },
 
-  extractTextFromPage: async (page: PDFPageProxy): Promise<string> => {
+  extractTextFromPage: async (page: PDFPageProxyType): Promise<string> => {
     try {
-      const textContent = await page.getTextContent();
-      return textContent.items.map(item => (item as TextItem).str).join(' ');
+      const textContent: TextContentType = await page.getTextContent(); // Use TextContentType
+      return textContent.items.map(item => (item as TextItemType).str).join(' '); // Use TextItemType
     } catch (error) {
       console.error('Error extracting text from page:', error);
       return '';
     }
   },
 
-  extractAllText: async (pdfDoc: PDFDocumentProxy): Promise<{pageTexts: string[], fullText: string}> => {
+  extractAllText: async (pdfDoc: PDFDocumentProxyType): Promise<{pageTexts: string[], fullText: string}> => {
     const numPages = pdfDoc.numPages;
     const pageTexts: string[] = [];
     let fullText = "";
@@ -86,8 +86,8 @@ export const pdfService = {
       const page = await pdfDoc.getPage(i);
       const text = await pdfService.extractTextFromPage(page);
       pageTexts.push(text);
-      fullText += text + "\n\n"; // Add newlines between pages
-      page.cleanup(); // Important for memory management
+      fullText += text + "\n\n"; 
+      page.cleanup(); 
     }
     return {pageTexts, fullText};
   },

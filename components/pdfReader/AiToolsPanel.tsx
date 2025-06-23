@@ -1,4 +1,4 @@
-/// <reference types="react" />
+
 import React from 'react';
 import { Bot, Languages, Rows, Volume2, PauseCircle, PlayCircle, SkipForward, ChevronDown, ListChecks } from 'lucide-react';
 import { TtsState } from '../../types';

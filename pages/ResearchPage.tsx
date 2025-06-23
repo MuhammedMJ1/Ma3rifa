@@ -1,4 +1,4 @@
-/// <reference types="react" />
+
 import React, { useState, useCallback } from 'react';
 import { geminiService } from '../services/geminiService';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';

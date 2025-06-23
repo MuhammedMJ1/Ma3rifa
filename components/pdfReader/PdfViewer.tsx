@@ -1,4 +1,4 @@
-/// <reference types="react" />
+
 import React, { useEffect, useRef, useState, memo } from 'react';
 import { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api';
 import { pdfService } from '../../services/pdfService';

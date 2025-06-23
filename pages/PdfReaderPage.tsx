@@ -1,4 +1,4 @@
-/// <reference types="react" />
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { pdfService } from '../services/pdfService';
 import { geminiService } from '../services/geminiService';

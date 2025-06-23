@@ -1,4 +1,4 @@
-/// <reference types="react" />
+
 import React from 'react';
 import { HashRouter, Routes, Route, Link, NavLink } from 'react-router-dom';
 import { HomePage } from './pages/HomePage';

@@ -1,4 +1,4 @@
-/// <reference types="react" />
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, FileText, Search, ExternalLink } from 'lucide-react';

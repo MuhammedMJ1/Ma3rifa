@@ -1,4 +1,5 @@
-/// <reference types="react" />
+
+
 import React, { useState, useEffect } from 'react';
 import { DisplaySettings } from '../../types';
 import { ChevronLeft, ChevronRight, Download, Search, Settings2, ZoomIn, ZoomOut, Palette, Type, UploadCloud, ListFilter } from 'lucide-react';
@@ -201,16 +202,7 @@ export const PdfControls: React.FC<PdfControlsProps> = ({
           </button>
         </div>
       </Modal>
-      <style jsx>{`
-        .hide-arrows::-webkit-outer-spin-button,
-        .hide-arrows::-webkit-inner-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        }
-        .hide-arrows {
-          -moz-appearance: textfield; /* Firefox */
-        }
-      `}</style>
+      {/* Styles for .hide-arrows are now in index.html */}
     </>
   );
 };
