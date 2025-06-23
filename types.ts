@@ -41,12 +41,12 @@ export interface ResearchArticle {
 
 export interface GroundingChunk {
   web?: {
-    uri: string | undefined; // Changed from string to string | undefined
-    title: string | undefined; // Changed from string to string | undefined
+    uri?: string; // Changed from 'string | undefined' to 'string?'
+    title?: string; // Changed from 'string | undefined' to 'string?'
   };
   retrievedContext?: {
-    uri: string | undefined; // Changed from string to string | undefined
-    title: string | undefined; // Changed from string to string | undefined
+    uri?: string; // Changed from 'string | undefined' to 'string?'
+    title?: string; // Changed from 'string | undefined' to 'string?'
   };
   // Add other possible grounding chunk types if needed
 }

@@ -1,4 +1,3 @@
-
 import * as pdfjsLib from 'pdfjs-dist';
 // Explicitly import types from their definition files for clarity and correctness
 import type { 
@@ -7,13 +6,15 @@ import type {
     TextItem as TextItemType, 
     TextContent as TextContentType 
 } from 'pdfjs-dist/types/src/display/api';
+import type { RenderParameters } from 'pdfjs-dist/types/src/display/api'; // For render context
+import type { TextLayerParameters } from 'pdfjs-dist/types/src/display/text_layer'; // For renderTextLayer parameters
+
 
 export const pdfService = {
   loadPdf: async (file: File): Promise<PDFDocumentProxyType | null> => {
     try {
       const arrayBuffer = await file.arrayBuffer();
-      // Use pdfjsLib.getDocument
-      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer }); // Use namespace import
       return await loadingTask.promise;
     } catch (error) {
       console.error('Error loading PDF:', error);
@@ -30,7 +31,7 @@ export const pdfService = {
   ): Promise<void> => {
     try {
       const page = await pdfDoc.getPage(pageNum);
-      const viewportBase = page.getViewport({ scale: 1.5 }); // Base viewport scale
+      // const viewportBase = page.getViewport({ scale: 1.5 }); // Base viewport scale
       const effectiveScale = 1.5 * (fontSizeMultiplier / 100);
       const viewport = page.getViewport({ scale: effectiveScale });
 
@@ -42,7 +43,7 @@ export const pdfService = {
       canvas.style.width = '100%';
       canvas.style.height = 'auto';
 
-      const renderContext = {
+      const renderContext: RenderParameters = { // Use RenderParameters type
         canvasContext: context,
         viewport: viewport,
       };
@@ -54,14 +55,15 @@ export const pdfService = {
       textLayerDiv.style.left = `${canvas.offsetLeft}px`;
       textLayerDiv.style.top = `${canvas.offsetTop}px`;
       
-      const textContentSource: TextContentType = await page.getTextContent(); // Use TextContentType
-      // Use pdfjsLib.renderTextLayer and await its promise
-      await pdfjsLib.renderTextLayer({ // Use pdfjsLib.renderTextLayer
-          textContent: textContentSource, 
+      const textContentSource: TextContentType = await page.getTextContent();
+      
+      const textLayerParams: TextLayerParameters = { // Use TextLayerParameters type
+          textContentSource: textContentSource, 
           container: textLayerDiv,
           viewport: viewport,
-          textDivs: [] 
-      }).promise;
+          // textDivs: [] // Removed for standard usage, renderTextLayer will create divs
+      };
+      await pdfjsLib.renderTextLayer(textLayerParams).promise; // Use namespace import
 
     } catch (error) {
       console.error(`Error rendering page ${pageNum}:`, error);
@@ -70,8 +72,8 @@ export const pdfService = {
 
   extractTextFromPage: async (page: PDFPageProxyType): Promise<string> => {
     try {
-      const textContent: TextContentType = await page.getTextContent(); // Use TextContentType
-      return textContent.items.map(item => (item as TextItemType).str).join(' '); // Use TextItemType
+      const textContent: TextContentType = await page.getTextContent();
+      return textContent.items.map(item => (item as TextItemType).str).join(' ');
     } catch (error) {
       console.error('Error extracting text from page:', error);
       return '';
