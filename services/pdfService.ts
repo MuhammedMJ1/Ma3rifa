@@ -1,12 +1,12 @@
-import * as pdfjsLib from 'pdfjs-dist';
-// Removed incorrect import: import { renderTextLayer } from 'pdfjs-dist';
+import { getDocument, renderTextLayer } from 'pdfjs-dist';
 import { PDFDocumentProxy, PDFPageProxy, TextItem } from 'pdfjs-dist/types/src/display/api';
 
 export const pdfService = {
   loadPdf: async (file: File): Promise<PDFDocumentProxy | null> => {
     try {
       const arrayBuffer = await file.arrayBuffer();
-      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+      // Use named import getDocument
+      const loadingTask = getDocument({ data: arrayBuffer });
       return await loadingTask.promise;
     } catch (error) {
       console.error('Error loading PDF:', error);
@@ -54,8 +54,8 @@ export const pdfService = {
       textLayerDiv.style.top = `${canvas.offsetTop}px`;
       
       const textContent = await page.getTextContent();
-      // Use pdfjsLib.renderTextLayer
-      await pdfjsLib.renderTextLayer({ 
+      // Use named import renderTextLayer
+      await renderTextLayer({ 
           textContentSource: textContent,
           container: textLayerDiv,
           viewport: viewport,
