@@ -38,7 +38,7 @@ export const ResearchPage: React.FC = () => {
       console.error("Research search error:", err);
       setError(`حدث خطأ أثناء البحث: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
-      setIsLoading(true);
+      setIsLoading(false); // Corrected: should be setIsLoading(false) in finally
     }
   };
 

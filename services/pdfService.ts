@@ -54,8 +54,8 @@ export const pdfService = {
       textLayerDiv.style.top = `${canvas.offsetTop}px`;
       
       const textContent = await page.getTextContent();
-      // Use named import renderTextLayer
-      await renderTextLayer({ 
+      // Use named import renderTextLayer and apply (as any) for type workaround
+      await (renderTextLayer as any)({ 
           textContentSource: textContent,
           container: textLayerDiv,
           viewport: viewport,

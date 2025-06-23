@@ -66,29 +66,6 @@ const PageRenderer: React.FC<{
       )}
       <canvas ref={canvasRef} />
       <div ref={textLayerRef} className="textLayer" /> {/* Text layer for selection and accessibility */}
-      <style jsx>{`
-        .textLayer {
-          position: absolute;
-          left: 0;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          opacity: 0.5; /* Make text layer visible for debugging, set to 0 or very low for production */
-          line-height: 1; /* pdf.js uses this */
-          overflow: hidden;
-          pointer-events: auto; /* Allow text selection */
-        }
-        .textLayer ::selection {
-          background: rgba(0,0,255,0.3);
-        }
-        .textLayer > span {
-          color: transparent;
-          position: absolute;
-          white-space: pre;
-          cursor: text;
-          transform-origin: 0% 0%;
-        }
-      `}</style>
     </div>
   );
 });

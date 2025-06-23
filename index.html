@@ -95,6 +95,29 @@
         color: var(--color-primary-dark);
     }
 
+    /* Styles for PDF.js Text Layer (moved from PdfViewer.tsx) */
+    .textLayer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0.2; /* Slightly visible for debugging, can be 0 */
+      line-height: 1; /* pdf.js uses this */
+      overflow: hidden;
+      pointer-events: none; /* Make text layer non-interactive by default if issues arise, pdf.js structure might handle it */
+    }
+    .textLayer > span { /* Spans are direct children that hold text */
+      color: transparent; /* Makes the actual text invisible, selection is handled by browser */
+      position: absolute;
+      white-space: pre;
+      cursor: text;
+      transform-origin: 0% 0%;
+      pointer-events: auto; /* Allow text selection on the spans themselves */
+    }
+     .textLayer ::selection {
+      background: rgba(0,0,255,0.3);
+    }
 
   </style>
 <script type="importmap">
