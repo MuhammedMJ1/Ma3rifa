@@ -1,0 +1,49 @@
+declare module 'react' {
+  const React: any;
+  export default React;
+  export function useState<T>(initial: T): [T, (value: T | ((prev: T) => T)) => void];
+  export function useEffect(effect: () => void | (() => void), deps?: any[]): void;
+  export function useRef<T>(initial: T): { current: T };
+  export function memo(component: any): any;
+  export function useCallback<T extends (...args: any[]) => any>(fn: T, deps?: any[]): T;
+  export interface FC<P = {}> extends Function {}
+  export interface ReactNode {}
+  export interface ChangeEvent<T = any> extends Event { target: T; }
+  export interface MouseEvent<T = any> extends Event { target: T; }
+  export type Dispatch<A> = (value: A) => void;
+  export type SetStateAction<S> = S | ((prev: S) => S);
+  export = React;
+}
+
+declare namespace JSX {
+  interface IntrinsicElements {
+    [elem: string]: any;
+  }
+}
+
+declare module 'react-dom/client' {
+  const createRoot: any;
+  export { createRoot };
+}
+
+declare module 'react-dom';
+declare module 'react-router-dom';
+declare module 'lucide-react';
+declare module 'pdfjs-dist';
+declare module 'pdfjs-dist/types/src/display/api' {
+  export type PDFDocumentProxy = any;
+  export type PDFPageProxy = any;
+  export type TextItem = any;
+  export type TextContent = any;
+  export interface RenderParameters { [key: string]: any }
+}
+declare module 'pdfjs-dist/types/src/display/text_layer' {
+  export interface TextLayerParameters { [key: string]: any }
+}
+declare module '@google/genai';
+declare module 'vite';
+declare module '@vitejs/plugin-react';
+declare module 'path';
+declare module 'react/jsx-runtime';
+declare module 'vite/client';
+declare module 'node';
