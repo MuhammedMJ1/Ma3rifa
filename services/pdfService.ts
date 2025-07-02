@@ -73,7 +73,7 @@ export const pdfService = {
   extractTextFromPage: async (page: PDFPageProxyType): Promise<string> => {
     try {
       const textContent: TextContentType = await page.getTextContent();
-      return textContent.items.map(item => (item as TextItemType).str).join(' ');
+      return textContent.items.map((item: any) => (item as TextItemType).str).join(' ');
     } catch (error) {
       console.error('Error extracting text from page:', error);
       return '';

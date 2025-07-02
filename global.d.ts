@@ -47,3 +47,12 @@ declare module 'path';
 declare module 'react/jsx-runtime';
 declare module 'vite/client';
 declare module 'node';
+
+interface ImportMeta {
+  env: Record<string, string>;
+}
+
+declare var process: {
+  cwd: () => string;
+  env: Record<string, string | undefined>;
+};
