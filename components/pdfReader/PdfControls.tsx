@@ -19,8 +19,8 @@ interface PdfControlsProps {
   isLoading: boolean;
 }
 
-const ControlButton: React.FC<{ onClick?: () => void; disabled?: boolean; children: React.ReactNode; title: string; className?: string }> = 
-  ({ onClick, disabled, children, title, className }) => (
+const ControlButton: React.FC<{ onClick?: () => void; disabled?: boolean; children: React.ReactNode; title: string; className?: string }> =
+  ({ onClick, disabled, children, title, className }: { onClick?: () => void; disabled?: boolean; children: React.ReactNode; title: string; className?: string }) => (
   <button
     onClick={onClick}
     disabled={disabled}
@@ -42,7 +42,7 @@ export const PdfControls: React.FC<PdfControlsProps> = ({
   searchTerm: initialSearchTerm,
   searchResults,
   isLoading
-}) => {
+}: PdfControlsProps) => {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [searchInput, setSearchInput] = useState(initialSearchTerm);
   const [currentSearchResultIndex, setCurrentSearchResultIndex] = useState(-1);
@@ -128,7 +128,7 @@ export const PdfControls: React.FC<PdfControlsProps> = ({
               type="text"
               placeholder="بحث في المستند..."
               value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value)}
               className="py-1.5 pr-8 pl-2 w-32 sm:w-48 bg-primary text-white rounded border border-primary-light focus:outline-none focus:ring-1 focus:ring-white placeholder-gray-300"
               disabled={isLoading || numPages === 0}
             />
@@ -154,11 +154,11 @@ export const PdfControls: React.FC<PdfControlsProps> = ({
           <div>
             <label htmlFor="fontSize" className="block text-sm font-medium mb-1">حجم الخط:</label>
             <div className="flex items-center gap-2">
-              <ControlButton onClick={() => setDisplaySettings(s => ({ ...s, fontSize: Math.max(MIN_FONT_SIZE, s.fontSize - FONT_SIZE_STEP) }))} title="تصغير الخط" className="bg-gray-200 text-gray-700 hover:bg-gray-300">
+              <ControlButton onClick={() => setDisplaySettings((s: DisplaySettings) => ({ ...s, fontSize: Math.max(MIN_FONT_SIZE, s.fontSize - FONT_SIZE_STEP) }))} title="تصغير الخط" className="bg-gray-200 text-gray-700 hover:bg-gray-300">
                 <ZoomOut size={18} />
               </ControlButton>
               <span className="text-lg w-16 text-center">{displaySettings.fontSize}%</span>
-              <ControlButton onClick={() => setDisplaySettings(s => ({ ...s, fontSize: Math.min(MAX_FONT_SIZE, s.fontSize + FONT_SIZE_STEP) }))} title="تكبير الخط" className="bg-gray-200 text-gray-700 hover:bg-gray-300">
+              <ControlButton onClick={() => setDisplaySettings((s: DisplaySettings) => ({ ...s, fontSize: Math.min(MAX_FONT_SIZE, s.fontSize + FONT_SIZE_STEP) }))} title="تكبير الخط" className="bg-gray-200 text-gray-700 hover:bg-gray-300">
                 <ZoomIn size={18} />
               </ControlButton>
             </div>
@@ -168,7 +168,7 @@ export const PdfControls: React.FC<PdfControlsProps> = ({
             <select
               id="fontFamily"
               value={displaySettings.fontFamily}
-              onChange={(e) => setDisplaySettings(s => ({ ...s, fontFamily: e.target.value }))}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setDisplaySettings((s: DisplaySettings) => ({ ...s, fontFamily: e.target.value }))}
               className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
             >
               {AVAILABLE_FONTS.map(font => (
@@ -183,7 +183,7 @@ export const PdfControls: React.FC<PdfControlsProps> = ({
                 <button
                   key={color.value}
                   title={color.name}
-                  onClick={() => setDisplaySettings(s => ({ 
+                  onClick={() => setDisplaySettings((s: DisplaySettings) => ({
                       ...s, 
                       backgroundColor: color.value,
                       textColor: color.value === '#121212' ? DARK_MODE_TEXT_COLOR : DEFAULT_TEXT_COLOR 

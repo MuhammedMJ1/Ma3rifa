@@ -25,7 +25,7 @@ interface AladhanResponse {
   data: AladhanResponseData;
 }
 
-const PrayerIcon: React.FC<{ prayerName: keyof typeof PRAYER_NAMES_ARABIC }> = ({ prayerName }) => {
+const PrayerIcon: React.FC<{ prayerName: keyof typeof PRAYER_NAMES_ARABIC }> = ({ prayerName }: { prayerName: keyof typeof PRAYER_NAMES_ARABIC }) => {
   switch (prayerName) {
     case 'Fajr': return <Sunrise size={18} className="text-sky-300" />;
     case 'Sunrise': return <Sunrise size={18} className="text-orange-300" />;
@@ -100,7 +100,7 @@ export const PrayerTimesBar: React.FC = () => {
           <MapPin size={16} className="text-teal-300" />
           <select
             value={selectedCity}
-            onChange={(e) => setSelectedCity(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedCity(e.target.value)}
             className="bg-transparent border-none outline-none text-white appearance-none cursor-pointer p-1 rounded hover:bg-slate-700/50 focus:bg-slate-700/50"
             aria-label="اختر المدينة"
           >

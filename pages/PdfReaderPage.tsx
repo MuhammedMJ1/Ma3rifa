@@ -35,7 +35,7 @@ export const PdfReaderPage: React.FC = () => {
 
   const { ttsState, play, pause, resume, stop, setSpeed, setSelectedVoice, isSynthesisPaused } = useSpeechSynthesis();
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     storageService.saveDisplaySettings(displaySettings);

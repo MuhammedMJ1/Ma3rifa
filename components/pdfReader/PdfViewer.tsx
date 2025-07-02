@@ -19,9 +19,9 @@ const PageRenderer: React.FC<{
   displaySettings: DisplaySettings;
   isActive: boolean;
   searchTerm?: string;
-}> = memo(({ pdfDoc, pageNum, displaySettings, isActive, searchTerm }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const textLayerRef = useRef<HTMLDivElement>(null);
+}> = memo(({ pdfDoc, pageNum, displaySettings, isActive, searchTerm }: { pdfDoc: PDFDocumentProxy; pageNum: number; displaySettings: DisplaySettings; isActive: boolean; searchTerm?: string }) => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const textLayerRef = useRef<HTMLDivElement | null>(null);
   const [isLoadingPage, setIsLoadingPage] = useState(true);
 
   useEffect(() => {
@@ -69,11 +69,11 @@ const PageRenderer: React.FC<{
     </div>
   );
 });
-PageRenderer.displayName = 'PageRenderer';
+(PageRenderer as any).displayName = 'PageRenderer';
 
 
-export const PdfViewer: React.FC<PdfViewerProps> = ({ pdfDoc, currentPage, displaySettings, searchTerm, textToDisplay }) => {
-  const viewerRef = useRef<HTMLDivElement>(null);
+export const PdfViewer: React.FC<PdfViewerProps> = ({ pdfDoc, currentPage, displaySettings, searchTerm, textToDisplay }: PdfViewerProps) => {
+  const viewerRef = useRef<HTMLDivElement | null>(null);
   const pageRefs = useRef<(HTMLDivElement | null)[]>([]); // To scroll to current page
 
   useEffect(() => {
@@ -113,8 +113,8 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ pdfDoc, currentPage, displ
 
   return (
     <div ref={viewerRef} className="pdf-viewer flex-grow overflow-y-auto p-2 md:p-4" style={{ backgroundColor: displaySettings.backgroundColor }}>
-      {Array.from(new Array(pdfDoc.numPages), (el, index) => (
-        <div key={`page_${index + 1}`} ref={el => pageRefs.current[index] = el}>
+        {Array.from(new Array(pdfDoc.numPages), (el, index) => (
+          <div key={`page_${index + 1}`} ref={(el: HTMLDivElement | null) => pageRefs.current[index] = el}>
           <PageRenderer
             pdfDoc={pdfDoc}
             pageNum={index + 1}

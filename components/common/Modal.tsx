@@ -10,10 +10,10 @@ interface ModalProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
-export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, size = 'md' }) => {
+export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, size = 'md' }: ModalProps) => {
   if (!isOpen) return null;
 
-  const sizeClasses = {
+  const sizeClasses: Record<'sm' | 'md' | 'lg' | 'xl', string> = {
     sm: 'max-w-sm',
     md: 'max-w-md',
     lg: 'max-w-lg',
@@ -30,7 +30,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, 
     >
       <div 
         className={`bg-white rounded-lg shadow-xl p-6 w-full ${sizeClasses[size]} transform transition-all duration-300 ease-in-out scale-95 opacity-0 animate-modal-appear`}
-        onClick={(e) => e.stopPropagation()} // Prevent click inside modal from closing it
+        onClick={(e: React.MouseEvent) => e.stopPropagation()} // Prevent click inside modal from closing it
       >
         <div className="flex justify-between items-center mb-4">
           {title && <h2 id="modal-title" className="text-xl font-semibold text-textPrimary">{title}</h2>}

@@ -18,15 +18,15 @@ const App: React.FC = () => {
           <div className="container mx-auto px-4 py-3 flex justify-between items-center">
             <Link to="/" className="text-xl font-bold">مدينة العلم</Link>
             <div className="flex items-center space-x-4 space-x-reverse">
-              <NavLink to="/" className={({ isActive }) => `flex items-center space-x-1 space-x-reverse px-3 py-2 rounded hover:bg-primary ${isActive ? 'bg-primary' : ''}`}>
+              <NavLink to="/" className={({ isActive }: { isActive: boolean }) => `flex items-center space-x-1 space-x-reverse px-3 py-2 rounded hover:bg-primary ${isActive ? 'bg-primary' : ''}`}>
                 <Home size={20} />
                 <span>الرئيسية</span>
               </NavLink>
-              <NavLink to="/reader" className={({ isActive }) => `flex items-center space-x-1 space-x-reverse px-3 py-2 rounded hover:bg-primary ${isActive ? 'bg-primary' : ''}`}>
+              <NavLink to="/reader" className={({ isActive }: { isActive: boolean }) => `flex items-center space-x-1 space-x-reverse px-3 py-2 rounded hover:bg-primary ${isActive ? 'bg-primary' : ''}`}>
                 <FileText size={20} />
                 <span>قارئ PDF</span>
               </NavLink>
-              <NavLink to="/research" className={({ isActive }) => `flex items-center space-x-1 space-x-reverse px-3 py-2 rounded hover:bg-primary ${isActive ? 'bg-primary' : ''}`}>
+              <NavLink to="/research" className={({ isActive }: { isActive: boolean }) => `flex items-center space-x-1 space-x-reverse px-3 py-2 rounded hover:bg-primary ${isActive ? 'bg-primary' : ''}`}>
                 <Search size={20} />
                 <span>البحث العلمي</span>
               </NavLink>

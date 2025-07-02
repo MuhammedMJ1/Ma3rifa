@@ -1,6 +1,7 @@
-/// <reference types="vite/client" />
-
-import { GoogleGenAI, GenerateContentResponse, Chat, GroundingChunk } from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
+type GenerateContentResponse = any;
+type Chat = any;
+type GroundingChunk = any;
 import { GEMINI_TEXT_MODEL } from '../constants';
 
 let apiKey: string | undefined = undefined;
@@ -25,7 +26,7 @@ if (!API_KEY) {
   console.error("API_KEY for Gemini is not set. Please ensure VITE_GEMINI_API_KEY is configured in your environment (e.g., .env file or Netlify build settings) or window.GEMINI_API_KEY is set. AI features will be unavailable.");
 }
 
-let ai: GoogleGenAI;
+let ai: any;
 if (API_KEY) {
     try {
         ai = new GoogleGenAI({ apiKey: API_KEY });
@@ -62,7 +63,7 @@ export const geminiService = {
         contents: prompt,
       });
       const keywordsText = response.text ?? "";
-      return keywordsText.split(',').map(kw => kw.trim()).filter(kw => kw.length > 0);
+      return keywordsText.split(',').map((kw: string) => kw.trim()).filter((kw: string) => kw.length > 0);
     } catch (error) {
       console.error('Error extracting keywords with Gemini:', error);
       return [`حدث خطأ أثناء استخراج الكلمات المفتاحية: ${error instanceof Error ? error.message : String(error)}`];
@@ -89,7 +90,7 @@ export const geminiService = {
     }
   },
 
-  searchResearchPapers: async (query: string): Promise<{ text: string, sources: GroundingChunk[] }> => {
+  searchResearchPapers: async (query: string): Promise<{ text: string; sources: any[] }> => {
     if (!API_KEY || !ai) return { text: defaultErrorMsg, sources: [] };
     try {
       const prompt = `ابحث عن أوراق بحثية علمية من مصادر مفتوحة حول الموضوع التالي: "${query}". قدم ملخصًا موجزًا للم یافته‌های الرئيسية باللغة العربية.`;
@@ -102,7 +103,7 @@ export const geminiService = {
       });
       
       const groundingMetadata = response.candidates?.[0]?.groundingMetadata;
-      const sources: GroundingChunk[] = groundingMetadata?.groundingChunks || [];
+      const sources: any[] = groundingMetadata?.groundingChunks || [];
       
       return { text: response.text ?? noResponseTextMsg, sources };
     } catch (error) {
@@ -115,7 +116,7 @@ export const geminiService = {
     }
   },
 
-  createChat: (): Chat | null => {
+  createChat: (): any => {
     if (!API_KEY || !ai) {
       console.error("Chat functionality unavailable. API Key not configured or AI client not initialized.");
       return null;
@@ -133,7 +134,7 @@ export const geminiService = {
     }
   },
 
-  sendMessageInChat: async (chat: Chat, message: string): Promise<string> => {
+  sendMessageInChat: async (chat: any, message: string): Promise<string> => {
     if (!API_KEY || !ai) return defaultErrorMsg;
     if (!chat) return "كائن الدردشة غير صالح أو لم يتم تهيئته.";
 
