@@ -12,7 +12,7 @@ interface IconLinkCardProps {
   description: string;
 }
 
-const IconLinkCard: React.FC<IconLinkCardProps> = ({ to, href, icon, title, description }) => {
+const IconLinkCard: React.FC<IconLinkCardProps> = ({ to, href, icon, title, description }: IconLinkCardProps) => {
   const commonProps = "block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow transform hover:-translate-y-1 text-center text-textPrimary";
   const content = (
     <>

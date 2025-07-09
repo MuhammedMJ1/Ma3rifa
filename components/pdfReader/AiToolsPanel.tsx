@@ -27,8 +27,8 @@ interface AiToolsPanelProps {
   };
 }
 
-const AiButton: React.FC<{ onClick: () => void; disabled?: boolean; children: React.ReactNode; title: string; isActive?: boolean}> = 
-  ({ onClick, disabled, children, title, isActive }) => (
+const AiButton: React.FC<{ onClick: () => void; disabled?: boolean; children: React.ReactNode; title: string; isActive?: boolean}> =
+  ({ onClick, disabled, children, title, isActive }: { onClick: () => void; disabled?: boolean; children: React.ReactNode; title: string; isActive?: boolean }) => (
   <button
     onClick={onClick}
     disabled={disabled}
@@ -51,7 +51,7 @@ export const AiToolsPanel: React.FC<AiToolsPanelProps> = ({
   hasTranslation,
   isLoading,
   tts,
-}) => {
+}: AiToolsPanelProps) => {
   return (
     <div className="w-full md:w-80 lg:w-96 bg-gray-50 p-3 sm:p-4 border-r border-gray-200 flex-shrink-0 overflow-y-auto space-y-4" 
         style={{ color: '#333' /* Ensure text color is readable on light gray bg */}}>
@@ -103,7 +103,7 @@ export const AiToolsPanel: React.FC<AiToolsPanelProps> = ({
              <select 
                 id="voiceSelect"
                 value={tts.ttsState.selectedVoice?.name || ''}
-                onChange={(e) => tts.setSelectedVoice(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => tts.setSelectedVoice(e.target.value)}
                 className="w-full p-1.5 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent"
                 disabled={tts.ttsState.isPlaying}
               >
@@ -133,7 +133,7 @@ export const AiToolsPanel: React.FC<AiToolsPanelProps> = ({
             max={TTS_MAX_SPEED} 
             step={TTS_SPEED_STEP} 
             value={tts.ttsState.speed}
-            onChange={(e) => tts.setSpeed(parseFloat(e.target.value))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => tts.setSpeed(parseFloat(e.target.value))}
             className="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-accent"
             disabled={tts.ttsState.isPlaying}
             title={`سرعة القراءة: ${tts.ttsState.speed}x`}

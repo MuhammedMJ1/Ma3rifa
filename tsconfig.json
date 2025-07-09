@@ -14,9 +14,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true, 
-    "jsx": "react-jsx",
-    "baseUrl": ".",
-    "types": ["react", "react-dom", "vite/client"]
+    "jsx": "react",
+    "baseUrl": "."
   },
   "include": [
     "./**/*.ts",

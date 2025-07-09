@@ -18,7 +18,7 @@ export const ResearchPage: React.FC = () => {
   const [translatedSummaries, setTranslatedSummaries] = useState<Record<number, string>>({});
   const [isTranslating, setIsTranslating] = useState<Record<number, boolean>>({});
 
-  const handleSearch = async (e?: React.FormEvent<HTMLFormElement>) => {
+  const handleSearch = async (e?: any) => {
     e?.preventDefault();
     if (!query.trim()) {
       setError("الرجاء إدخال موضوع البحث.");
@@ -68,7 +68,7 @@ export const ResearchPage: React.FC = () => {
         <input
           type="text"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
           placeholder="أدخل موضوع البحث (مثال: تأثير الذكاء الاصطناعي على التعليم)"
           className="flex-grow p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent focus:border-transparent outline-none"
           aria-label="موضوع البحث"

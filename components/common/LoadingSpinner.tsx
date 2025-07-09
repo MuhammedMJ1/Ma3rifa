@@ -8,7 +8,7 @@ interface LoadingSpinnerProps {
   className?: string;
 }
 
-export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size = 24, text, className }) => {
+export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size = 24, text, className }: LoadingSpinnerProps) => {
   return (
     <div className={`flex flex-col items-center justify-center text-primary ${className}`}>
       <Loader2 size={size} className="animate-spin" />
