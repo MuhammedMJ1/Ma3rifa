@@ -1,18 +1,27 @@
 declare module 'react' {
-  const React: any;
-  export default React;
+  export type ReactNode = any;
+  export type FC<P = any> = (props: any) => any;
   export function useState<T>(initial: T): [T, (value: T | ((prev: T) => T)) => void];
   export function useEffect(effect: () => void | (() => void), deps?: any[]): void;
   export function useRef<T>(initial: T): { current: T };
   export function memo(component: any): any;
   export function useCallback<T extends (...args: any[]) => any>(fn: T, deps?: any[]): T;
-  export interface FC<P = {}> extends Function {}
-  export interface ReactNode {}
+  export const StrictMode: FC<{ children?: ReactNode }>;
+  const React: {
+    useState: typeof useState;
+    useEffect: typeof useEffect;
+    useRef: typeof useRef;
+    memo: typeof memo;
+    useCallback: typeof useCallback;
+    StrictMode: typeof StrictMode;
+  };
+  export default React;
+  export = React;
+  export as namespace React;
   export interface ChangeEvent<T = any> extends Event { target: T; }
   export interface MouseEvent<T = any> extends Event { target: T; }
   export type Dispatch<A> = (value: A) => void;
   export type SetStateAction<S> = S | ((prev: S) => S);
-  export = React;
 }
 
 declare namespace JSX {
